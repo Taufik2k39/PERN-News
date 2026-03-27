@@ -1,0 +1,6 @@
+# GitHub Linguist language overrides
+backend/** linguist-language=JavaScript
+frontend/**/*.js linguist-language=JavaScript
+frontend/**/*.jsx linguist-language=JavaScript
+frontend/**/*.css linguist-language=CSS
+frontend/**/*.html linguist-language=HTML
