@@ -15,6 +15,22 @@ function Home() {
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
 
+  const formatPostDate = (dateValue) => {
+    if (!dateValue) return 'Tanggal tidak tersedia'
+
+    const date = new Date(dateValue)
+
+    if (Number.isNaN(date.getTime())) {
+      return 'Tanggal tidak tersedia'
+    }
+
+    return date.toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    })
+  }
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -57,6 +73,9 @@ function Home() {
             <CardTitle className="text-xl font-semibold text-stone-900 dark:text-white">
               {post.title}
             </CardTitle>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Diposting pada {formatPostDate(post.created_at || post.createdAt)}
+            </p>
           </CardHeader>
           <Separator className="mx-6 my-3" />
           <CardContent>
