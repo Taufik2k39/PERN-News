@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import {
 	Card,
 	CardContent,
@@ -71,15 +72,19 @@ function Show() {
 					{!isLoading && errorMessage ? <p className="text-sm text-red-600">{errorMessage}</p> : null}
 
 					{!isLoading && !errorMessage && post ? (
-						<>
-							<div>
-								<h2 className="text-2xl font-semibold">{post.title}</h2>
-								<Separator>
-								    <span className="mt-1 text-xs text-muted-foreground">ID: {post.id}</span>
-								</Separator>
-							</div>
+							<>
+								<div className="space-y-3">
+									<div className="flex flex-wrap items-center gap-3">
+										<h2 className="text-2xl font-semibold">{post.title}</h2>
+										<Badge variant="secondary">Penulis: {post.author_name || 'Anonim'}</Badge>
+									</div>
+									<div className="space-y-2">
+										<Separator />
+										<span className="block text-xs text-muted-foreground">ID: {post.id}</span>
+									</div>
+								</div>
 
-							<p className="whitespace-pre-line text-sm leading-6 text-stone-700 dark:text-white">{post.content}</p>
+								<p className="whitespace-pre-line text-sm leading-6 text-stone-700 dark:text-white">{post.content}</p>
 
 							<div className="flex gap-3">
 								<Button asChild>

@@ -9,12 +9,23 @@ export const createPost = async (title, content, userId) => {
 };
 
 export const getPosts = async () => {
-  const result = await pool.query("SELECT * FROM posts ORDER BY created_at DESC");
+  const result = await pool.query(
+    `SELECT posts.*, users.username AS author_name
+     FROM posts
+     LEFT JOIN users ON posts.user_id = users.id
+     ORDER BY posts.created_at DESC`
+  );
   return result.rows;
 };
 
 export const getPostById = async (id) => {
-  const result = await pool.query("SELECT * FROM posts WHERE id = $1", [id]);
+  const result = await pool.query(
+    `SELECT posts.*, users.username AS author_name
+     FROM posts
+     LEFT JOIN users ON posts.user_id = users.id
+     WHERE posts.id = $1`,
+    [id]
+  );
   return result.rows[0];
 };
 

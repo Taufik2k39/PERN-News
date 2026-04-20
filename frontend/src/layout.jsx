@@ -9,7 +9,7 @@ function Layout() {
       <Sidebar />
       <Navbar />
 
-      <main className="min-h-screen px-4 pb-24 pt-20 md:pb-8 md:pl-64 md:pr-8 md:pt-20 lg:pr-10">
+      <main className="min-h-screen px-4 pb-24 pt-32 md:pb-8 md:pl-64 md:pr-8 md:pt-20 lg:pr-10">
         <section className="mx-auto w-full max-w-7xl rounded-3xl border border-white/40 bg-white/45 p-4 shadow-sm backdrop-blur-sm dark:border-white/10 dark:bg-slate-900/35 md:p-6 lg:p-8">
           <Outlet />
         </section>
