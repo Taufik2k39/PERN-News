@@ -83,7 +83,13 @@ function Show() {
 										<span className="block text-xs text-muted-foreground">ID: {post.id}</span>
 									</div>
 								</div>
-
+								{post.image && (
+									<img
+										src={post.image}
+										alt={post.title}
+										className="w-full h-64 object-cover rounded-lg"
+									/>
+								)}
 								<p className="whitespace-pre-line text-sm leading-6 text-stone-700 dark:text-white">{post.content}</p>
 
 							<div className="flex gap-3">

@@ -1,4 +1,16 @@
 import { createPost, getPosts, getPostById, updatePost, deletePost } from "../models/postModel.js";
+import { getUploadedImagePath, toPublicImageUrl } from "../utils/image.js";
+
+const attachPostImageUrl = (req, post) => {
+  if (!post) {
+    return post;
+  }
+
+  return {
+    ...post,
+    image: toPublicImageUrl(req, post.image),
+  };
+};
 
 const getPostErrorResponse = (error) => {
   const dbConnectionErrors = ["ECONNREFUSED", "ENOTFOUND", "28P01", "3D000"];
@@ -26,13 +38,14 @@ const getPostErrorResponse = (error) => {
 export const create = async (req, res) => {
   try {
     const { title, content } = req.body;
+    const image = getUploadedImagePath(req) ?? req.body?.image;
 
     if (!title || !content) {
       return res.status(400).json({ message: "Title dan content wajib diisi" });
     }
 
-    const post = await createPost(title, content, req.user.id);
-    return res.status(201).json(post);
+    const post = await createPost(title, content, image, req.user.id);
+    return res.status(201).json(attachPostImageUrl(req, post));
   } catch (error) {
     console.error("Create post error:", error);
     const parsedError = getPostErrorResponse(error);
@@ -43,7 +56,7 @@ export const create = async (req, res) => {
 export const index = async (req, res) => {
   try {
     const posts = await getPosts();
-    return res.json(posts);
+    return res.json(posts.map((post) => attachPostImageUrl(req, post)));
   } catch (error) {
     console.error("Get posts error:", error);
     const parsedError = getPostErrorResponse(error);
@@ -57,7 +70,7 @@ export const show = async (req, res) => {
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
-    return res.json(post);
+    return res.json(attachPostImageUrl(req, post));
   } catch (error) {
     console.error("Get post detail error:", error);
     const parsedError = getPostErrorResponse(error);
@@ -73,13 +86,14 @@ export const edit = async (req, res) => {
       return res.status(400).json({ message: "Title dan content wajib diisi" });
     }
 
-    const post = await updatePost(req.params.id, title, content);
+    const image = getUploadedImagePath(req);
+    const post = await updatePost(req.params.id, title, content, image);
 
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    return res.json(post);
+    return res.json(attachPostImageUrl(req, post));
   } catch (error) {
     console.error("Update post error:", error);
     const parsedError = getPostErrorResponse(error);

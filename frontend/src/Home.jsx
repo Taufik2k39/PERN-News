@@ -122,39 +122,48 @@ function Home() {
           Tidak ada post yang cocok dengan pencarian Anda.
         </p>
       )}
-
+      {/*menampilkan gambar di halaman ini */}
       {filteredPosts.map((post) => (
         <Card
           key={post.id}
-          className="rounded-xl bg-gray-100 shadow-sm dark:bg-stone-800/80"
+          className="flex flex-row items-start rounded-xl bg-gray-100 shadow-sm dark:bg-stone-800/80"
         >
-          <CardHeader className="space-y-3">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <CardTitle className="text-xl font-semibold text-stone-900 dark:text-white">
-                {post.title}
-              </CardTitle>
-              <Badge variant="secondary" className="rounded-full bg-green-500 text-white">
-                {getAuthorName(post)}
-              </Badge>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Diposting pada {formatPostDateTime(post.created_at || post.createdAt)}
-            </p>
-          </CardHeader>
-          <Separator className="mx-6 my-3" />
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              {getPostExcerpt(post)}
-            </p>
-          </CardContent>
-          <CardFooter>
-            <Link
-              to={`/posts/${post.id}`}
-              className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
-            >
-              Lihat detail
-            </Link>
-          </CardFooter>
+          {post.image && (
+            <img
+              src={post.image}
+              alt={post.title}
+              className="w-48 h-48 object-cover rounded-l-lg"
+            />
+          )}
+          <div className="flex flex-col flex-1">
+            <CardHeader className="space-y-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <CardTitle className="text-xl font-semibold text-stone-900 dark:text-white">
+                  {post.title}
+                </CardTitle>
+                <Badge variant="secondary" className="rounded-full bg-green-500 text-white">
+                  {getAuthorName(post)}
+                </Badge>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Diposting pada {formatPostDateTime(post.created_at || post.createdAt)}
+              </p>
+            </CardHeader>
+            <Separator className="mx-6 my-3" />
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                {getPostExcerpt(post)}
+              </p>
+            </CardContent>
+            <CardFooter>
+              <Link
+                to={`/posts/${post.id}`}
+                className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
+              >
+                Lihat detail
+              </Link>
+            </CardFooter>
+          </div>
         </Card>
       ))}
     </div>

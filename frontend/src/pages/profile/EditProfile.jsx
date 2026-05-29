@@ -10,6 +10,7 @@ export default function EditProfile() {
 	const navigate = useNavigate()
 	const [username, setUsername] = useState('')
 	const [email, setEmail] = useState('')
+	const [image, setImage] = useState(null)
 	const [isLoading, setIsLoading] = useState(true)
 	const [isSubmitting, setIsSubmitting] = useState(false)
 	const [errorMessage, setErrorMessage] = useState('')
@@ -45,7 +46,7 @@ export default function EditProfile() {
 			setIsSubmitting(true)
 			setErrorMessage('')
 			setSuccessMessage('')
-			await authApi.updateMe({ username, email })
+			await authApi.updateMe({ username, email, image })
 			setSuccessMessage('Profil berhasil diperbarui.')
 		} catch (error) {
 			setErrorMessage(error.message || 'Gagal memperbarui profil.')
@@ -90,6 +91,16 @@ export default function EditProfile() {
 									placeholder="nama@email.com"
 									value={email}
 									onChange={(event) => setEmail(event.target.value)}
+								/>
+							</div>
+							{/*update foto profile dengan file*/}
+							<div className="space-y-2">
+								<Label htmlFor="image">Foto Profil</Label>
+								<Input
+									id="image"
+									type="file"
+									accept="image/*"
+									onChange={(event) => setImage(event.target.files[0])}
 								/>
 							</div>
 

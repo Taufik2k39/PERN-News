@@ -7,8 +7,20 @@ import {
   updateUserById,
 } from "../models/userModel.js";
 import { hashPassword, comparePassword } from "../utils/hash.js";
+import { getUploadedImagePath, toPublicImageUrl } from "../utils/image.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
+
+const attachUserImageUrl = (req, user) => {
+  if (!user) {
+    return user;
+  }
+
+  return {
+    ...user,
+    image: toPublicImageUrl(req, user.image),
+  };
+};
 
 const getAuthErrorResponse = (error, fallbackMessage) => {
   const dbConnectionErrors = ["ECONNREFUSED", "ENOTFOUND", "28P01", "3D000"];
@@ -36,6 +48,7 @@ const getAuthErrorResponse = (error, fallbackMessage) => {
 export const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
+    const image = getUploadedImagePath(req) ?? req.body?.image;
 
     if (!username || !email || !password) {
       return res.status(400).json({ message: "Username, email, dan password wajib diisi" });
@@ -47,8 +60,8 @@ export const register = async (req, res) => {
     }
 
     const passwordHash = await hashPassword(password);
-    const user = await createUser(username, email, passwordHash);
-    return res.status(201).json(user);
+    const user = await createUser(username, email, passwordHash, image);
+    return res.status(201).json(attachUserImageUrl(req, user));
   } catch (error) {
     const parsedError = getAuthErrorResponse(error, "Failed to register user");
     console.error("Register error:", error);
@@ -91,7 +104,7 @@ export const me = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    return res.json(user);
+    return res.json(attachUserImageUrl(req, user));
   } catch (error) {
     const parsedError = getAuthErrorResponse(error, "Failed to fetch profile");
     console.error("Profile error:", error);
@@ -128,13 +141,14 @@ export const updateMe = async (req, res) => {
       return res.status(400).json({ message: "Email already exists" });
     }
 
-    const updatedUser = await updateUserById(req.user.id, username, email);
+    const image = getUploadedImagePath(req);
+    const updatedUser = await updateUserById(req.user.id, username, email, image);
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    return res.json(updatedUser);
+    return res.json(attachUserImageUrl(req, updatedUser));
   } catch (error) {
     const parsedError = getAuthErrorResponse(error, "Failed to update profile");
     console.error("Update profile error:", error);

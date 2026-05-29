@@ -20,6 +20,7 @@ function Edit() {
 
 	const [title, setTitle] = useState('')
 	const [content, setContent] = useState('')
+	const [image, setImage] = useState(null)
 	const [isLoading, setIsLoading] = useState(true)
 	const [isSubmitting, setIsSubmitting] = useState(false)
 	const [errorMessage, setErrorMessage] = useState('')
@@ -59,7 +60,7 @@ function Edit() {
 			setErrorMessage('')
 			setSuccessMessage('')
 
-			await postsApi.update(id, { title, content })
+			await postsApi.update(id, { title, content, image })
 
 			setSuccessMessage('Post berhasil diperbarui.')
 			setTimeout(() => {
@@ -106,7 +107,25 @@ function Edit() {
 									onChange={(event) => setContent(event.target.value)}
 								/>
 							</div>
-
+							{/*image pake file*/}
+							<div className="space-y-2">
+								<Label htmlFor="image">Gambar</Label>
+								<Input
+									id="image"
+									type="file"
+									accept="image/*"
+									onChange={(event) => setImage(event.target.files[0])}
+								/>
+							</div>
+							{/*menampilkan gambar saat ini jika ada*/}
+							{image && (
+								<img
+									src={URL.createObjectURL(image)}
+									alt="Preview"
+									className="w-full h-64 object-cover rounded-lg"
+								/>
+							)}
+							<Separator className="my-4" />
 							{errorMessage ? <p className="text-sm text-red-600">{errorMessage}</p> : null}
 							{successMessage ? <p className="text-sm text-green-600">{successMessage}</p> : null}
 							<Separator className="my-4" />

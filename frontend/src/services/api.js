@@ -3,6 +3,42 @@ import axios from "axios"
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api"
 const AUTH_TOKEN_KEY = "authToken"
 
+const isFile = (value) =>
+	typeof File !== "undefined" && value instanceof File
+
+const toFormData = (payload) => {
+	const formData = new FormData()
+
+	Object.entries(payload || {}).forEach(([key, value]) => {
+		if (value === undefined || value === null || value === "") {
+			return
+		}
+
+		formData.append(key, value)
+	})
+
+	return formData
+}
+
+const postOrPut = async (method, url, payload) => {
+	const hasImageFile = isFile(payload?.image)
+
+	if (hasImageFile) {
+		const { data } = await api.request({
+			method,
+			url,
+			data: toFormData(payload),
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		})
+		return data
+	}
+
+	const { data } = await api.request({ method, url, data: payload })
+	return data
+}
+
 const api = axios.create({
 	baseURL: API_BASE_URL,
 	timeout: 10000,
@@ -91,8 +127,7 @@ export const authApi = {
 	},
 	updateMe: async (payload) => {
 		requireAuthToken()
-		const { data } = await api.put(API_ENDPOINTS.auth.me, payload)
-		return data
+		return postOrPut("put", API_ENDPOINTS.auth.me, payload)
 	},
 }
 
@@ -107,13 +142,11 @@ export const postsApi = {
 	},
 	create: async (payload) => {
 		requireAuthToken()
-		const { data } = await api.post(API_ENDPOINTS.posts.list, payload)
-		return data
+		return postOrPut("post", API_ENDPOINTS.posts.list, payload)
 	},
 	update: async (id, payload) => {
 		requireAuthToken()
-		const { data } = await api.put(API_ENDPOINTS.posts.detail(id), payload)
-		return data
+		return postOrPut("put", API_ENDPOINTS.posts.detail(id), payload)
 	},
 	remove: async (id) => {
 		requireAuthToken()

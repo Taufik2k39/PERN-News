@@ -26,8 +26,14 @@ export const initializeDatabase = async () => {
       username VARCHAR(100) NOT NULL,
       email VARCHAR(255) UNIQUE NOT NULL,
       password TEXT NOT NULL,
+      image TEXT,
       created_at TIMESTAMP DEFAULT NOW()
     );
+  `);
+
+  await pool.query(`
+    ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS image TEXT;
   `);
 
   await pool.query(`
@@ -35,10 +41,21 @@ export const initializeDatabase = async () => {
       id SERIAL PRIMARY KEY,
       title TEXT NOT NULL,
       content TEXT NOT NULL,
+      image TEXT,
       user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()
     );
+  `);
+
+  await pool.query(`
+    ALTER TABLE posts
+    ADD COLUMN IF NOT EXISTS image TEXT;
+  `);
+
+  await pool.query(`
+    ALTER TABLE posts
+    ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW();
   `);
 };
 
